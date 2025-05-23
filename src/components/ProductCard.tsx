@@ -6,12 +6,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import type { Product } from "@/features/products/ProductSlice";
+import { type Product } from "@/features/products/ProductSlice";
 import { Badge } from "@/components/ui/badge";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart, toggleCart } from "@/features/cart/CartSlice";
 import type { AppDispatch, RootState } from "@/app/store";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import { Star } from "lucide-react";
 
 interface ProductCardProps {
   product: Product;
@@ -19,6 +21,7 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
   const { items } = useSelector((state: RootState) => state.CartReducer);
 
   const existingItem = items.find((item) => item.id === product.id);
@@ -29,6 +32,10 @@ export function ProductCard({ product }: ProductCardProps) {
   };
   const handleGotoCart = () => {
     dispatch(toggleCart());
+  };
+
+  const handleShowDetails = () => {
+    navigate(`/products/${product.id}`);
   };
 
   return (
@@ -45,13 +52,18 @@ export function ProductCard({ product }: ProductCardProps) {
           {product.title}
         </CardTitle>
         <Badge variant="secondary" className="mb-2 text-base">
-          ${product.price}
+          ${product.price}  {product.category}
         </Badge>
+        <div className="flex items-center gap-1 mb-2">
+          <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+          <span className="text-sm font-medium">{product.rating.rate}</span>
+          <span className="text-sm text-gray-500">({product.rating.count} reviews)</span>
+        </div>
         <p className="text-sm text-gray-500 line-clamp-3">
           {product.description}
         </p>
       </CardContent>
-      <CardFooter className="p-4 pt-0">
+      <CardFooter className="p-4 pt-0 flex flex-col gap-2">
         {existingItem ? (
           <Button variant={"link"} className="w-full" onClick={handleGotoCart}>
             Go to Cart
@@ -61,6 +73,9 @@ export function ProductCard({ product }: ProductCardProps) {
             Add to Cart
           </Button>
         )}
+        <p className="text-sm text-center text-black hover:underline cursor-pointer" onClick={handleShowDetails}>
+          Show Details
+        </p>
       </CardFooter>
     </Card>
   );

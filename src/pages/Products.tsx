@@ -6,6 +6,15 @@ import { ProductCard } from "@/components/ProductCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import Pagination from "@/components/Pagination";
 import { Input } from "@/components/ui/input";
+import { Combobox } from "@/components/ui/combobox";
+
+const categoryOptions = [
+  { label: "All Categories", value: "" },
+  { label: "Men's Clothing", value: "men's clothing" },
+  { label: "Women's Clothing", value: "women's clothing" },
+  { label: "Jewelery", value: "jewelery" },
+  { label: "Electronics", value: "electronics" },
+];
 
 const Products = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -13,6 +22,7 @@ const Products = () => {
     const itemsPerPage = 8;
     const [currPage, setCurrPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState("");
+    const [selectedCategory, setSelectedCategory] = useState("");
 
     useEffect(() => {
         if (status === 'idle') {
@@ -22,7 +32,8 @@ const Products = () => {
 
     // Filter the full product list
     const filteredProducts = items.filter(item =>
-        item.title.toLowerCase().includes(searchTerm.toLowerCase())
+        item.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
+        (selectedCategory === "" || item.category === selectedCategory)
     );
 
     // Update totalPages based on filtered products
@@ -47,6 +58,12 @@ const Products = () => {
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(event.target.value);
         setCurrPage(1); 
+    };
+
+    // Handle category change
+    const handleCategoryChange = (value: string) => {
+        setSelectedCategory(value);
+        setCurrPage(1);
     };
 
     if (status === 'loading') {
@@ -74,16 +91,24 @@ const Products = () => {
         <div className="container mx-auto p-4">
              <h1 className="text-3xl font-bold mb-6">Our Products</h1>
 
-            {/* Search Input */}
-            <div className="mb-6">
+            {/* Search and Filter Section */}
+            <div className="mb-6 flex flex-col sm:flex-row gap-4">
                 <Input
                     type="text"
                     placeholder="Search products..."
                     value={searchTerm}
                     onChange={handleSearchChange}
-                    className="w-full max-w-sm"
+                    className="w-full sm:max-w-sm"
                     aria-label="Search Product"
                 />
+                <div className="w-full sm:max-w-sm">
+                    <Combobox
+                        options={categoryOptions}
+                        value={selectedCategory}
+                        onValueChange={handleCategoryChange}
+                        placeholder="Select category..."
+                    />
+                </div>
             </div>
 
             {filteredProducts.length === 0 ? (
@@ -97,8 +122,8 @@ const Products = () => {
             )}
 
             {/* Only show pagination if there are filtered products */}
-            {filteredProducts.length > 0 && totalPages > 1 && (
-                 <Pagination
+            {filteredProducts.length > 0 && (
+                <Pagination
                     currPage={currPage}
                     totalPages={totalPages}
                     onPageChange={HandlePageChange}
