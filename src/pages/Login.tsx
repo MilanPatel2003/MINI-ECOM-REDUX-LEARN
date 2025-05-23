@@ -2,20 +2,32 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import type { AppDispatch } from "@/app/store";
+import { setLogin } from "@/features/login/LoginSlice";
 
 export default function Login() {
     const [formData, setFormData] = useState({
         email: "",
-        password: ""
+        password: "",
+        username: ""
     });
+    const dispatch = useDispatch<AppDispatch>();
+    const navigate = useNavigate();
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        // Here you would typically handle the login
-        toast.success("Logged in successfully!");
+        // For demo purposes, we'll just check if email and password are not empty
+        if (formData.email && formData.password && formData.username) {
+            dispatch(setLogin(formData));
+            toast.success("Logged in successfully!");
+            navigate("/products");
+        } else {
+            toast.error("Please fill in all fields");
+        }
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,6 +47,17 @@ export default function Login() {
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="username">Username</Label>
+                                <Input
+                                    id="username"
+                                    name="username"
+                                    placeholder="Enter your username"
+                                    value={formData.username}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </div>
                             <div className="space-y-2">
                                 <Label htmlFor="email">Email</Label>
                                 <Input
@@ -75,13 +98,7 @@ export default function Login() {
                             <div className="absolute inset-0 flex items-center">
                                 <span className="w-full border-t" />
                             </div>
-                            <div className="relative flex justify-center text-xs uppercase">
-                                <span className="bg-background px-2 text-muted-foreground">
-                                    Or continue with
-                                </span>
-                            </div>
                         </div>
-
                     </CardContent>
                     <CardFooter className="flex flex-col space-y-4">
                         <div className="text-sm text-center text-muted-foreground">

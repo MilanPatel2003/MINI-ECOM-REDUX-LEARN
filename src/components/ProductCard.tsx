@@ -23,18 +23,29 @@ export function ProductCard({ product }: ProductCardProps) {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { items } = useSelector((state: RootState) => state.CartReducer);
+  const { status } = useSelector((state: RootState) => state.LoginReducer);
 
   const existingItem = items.find((item) => item.id === product.id);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent card click when clicking the button
-    dispatch(addToCart(product));
-    toast.success("Item added to Cart!");
+    if (status === "succeeded") {
+      dispatch(addToCart(product));
+      toast.success("Item added to Cart!");
+    } else {
+      toast.error("Please login to add items to cart");
+      navigate("/login");
+    }
   };
 
   const handleGotoCart = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent card click when clicking the button
-    dispatch(toggleCart());
+    if (status === "succeeded") {
+      dispatch(toggleCart());
+    } else {
+      toast.error("Please login to view cart");
+      navigate("/login");
+    }
   };
 
   const handleShowDetails = () => {
