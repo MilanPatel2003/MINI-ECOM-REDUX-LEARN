@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "@/app/store";
 import { setLogin } from "@/features/login/LoginSlice";
+import { Info } from "lucide-react";
 
 export default function Login() {
     const [formData, setFormData] = useState({
@@ -44,6 +45,12 @@ export default function Login() {
                         <CardDescription className="text-center">
                             Enter your credentials to access your account
                         </CardDescription>
+                        <div className="bg-blue-50 p-3 rounded-md flex items-start gap-2 text-sm text-green-700">
+                            <Info className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                            <p>
+                                <span className="font-medium">Demo Note:</span> This is a demo login. You can enter any username, email, and password to log in.
+                            </p>
+                        </div>
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-4">

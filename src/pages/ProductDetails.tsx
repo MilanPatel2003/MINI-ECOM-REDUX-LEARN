@@ -19,6 +19,7 @@ export default function ProductDetails() {
     (state: RootState) => state.ProductReducer
   );
   const { items } = useSelector((state: RootState) => state.CartReducer);
+  const { status:loginStatus } = useSelector((state: RootState) => state.LoginReducer);
 
   useEffect(() => {
     if (id) {
@@ -55,12 +56,24 @@ export default function ProductDetails() {
     );
   }
   const existingItem = items.find((item) => item.id === singleProduct.id);
+
   const handleAddToCart = () => {
-    dispatch(addToCart(singleProduct));
-    toast.success("Item added to Cart!");
+    if (loginStatus === "succeeded") {
+      dispatch(addToCart(singleProduct));
+      toast.success("Item added to Cart!");
+    } else {
+      toast.error("Please login to add items to cart");
+      navigate("/login");
+    }
   };
+
   const handleGotoCart = () => {
-    dispatch(toggleCart());
+    if (loginStatus === "succeeded") {
+      dispatch(toggleCart());
+    } else {
+      toast.error("Please login to view cart");
+      navigate("/login");
+    }
   };
 
   return (
