@@ -1,4 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import type { RootState, AppDispatch } from "@/app/store";
 import { toggleCart, increaseQuantity, decreaseQuantity } from "@/features/cart/CartSlice";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
@@ -9,6 +10,7 @@ import { Plus, Minus } from "lucide-react";
 
 export function CartModal() {
     const dispatch = useDispatch<AppDispatch>();
+    const navigate = useNavigate();
     const { items: cartItems, totalQuantity, totalPrice, showCart } = useSelector((state: RootState) => state.CartReducer);
 
     const handleClose = () => {
@@ -21,6 +23,11 @@ export function CartModal() {
 
     const handleDecreaseQuantity = (productId: number) => {
         dispatch(decreaseQuantity(productId));
+    };
+
+    const handleProceedToCheckout = () => {
+        dispatch(toggleCart());
+        navigate('/checkout');
     };
 
     return (
@@ -78,7 +85,13 @@ export function CartModal() {
                 </div>
 
                 <DialogFooter>
-                    <Button className="w-full">Proceed to Checkout</Button>
+                    <Button 
+                        className="w-full" 
+                        onClick={handleProceedToCheckout}
+                        disabled={cartItems.length === 0}
+                    >
+                        Proceed to Checkout
+                    </Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
