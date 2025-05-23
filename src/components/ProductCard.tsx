@@ -26,11 +26,14 @@ export function ProductCard({ product }: ProductCardProps) {
 
   const existingItem = items.find((item) => item.id === product.id);
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click when clicking the button
     dispatch(addToCart(product));
     toast.success("Item added to Cart!");
   };
-  const handleGotoCart = () => {
+
+  const handleGotoCart = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click when clicking the button
     dispatch(toggleCart());
   };
 
@@ -39,7 +42,10 @@ export function ProductCard({ product }: ProductCardProps) {
   };
 
   return (
-    <Card className="w-full flex flex-col">
+    <Card 
+      className="w-full flex flex-col cursor-pointer transition-all hover:shadow-lg" 
+      onClick={handleShowDetails}
+    >
       <CardHeader className="h-48 flex items-center justify-center overflow-hidden p-4">
         <img
           src={product.image}
@@ -52,7 +58,7 @@ export function ProductCard({ product }: ProductCardProps) {
           {product.title}
         </CardTitle>
         <Badge variant="secondary" className="mb-2 text-base">
-          ${product.price}  {product.category}
+          ${product.price} {product.category}
         </Badge>
         <div className="flex items-center gap-1 mb-2">
           <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
@@ -73,7 +79,7 @@ export function ProductCard({ product }: ProductCardProps) {
             Add to Cart
           </Button>
         )}
-        <p className="text-sm text-center text-black hover:underline cursor-pointer" onClick={handleShowDetails}>
+        <p className="text-sm text-center text-black hover:underline">
           Show Details
         </p>
       </CardFooter>
